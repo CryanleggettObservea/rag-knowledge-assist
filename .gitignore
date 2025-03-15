@@ -6,6 +6,15 @@ __pycache__/
 # C extensions
 *.so
 
+# Ignore real environment variables file
+.env
+.env.local
+.env.development
+.env.production
+
+# But don't ignore the example template
+!.env.example
+
 # Distribution / packaging
 .Python
 build/
