@@ -1,6 +1,7 @@
 import uvicorn
 import logging
 import os
+from app.utils.document_watcher import DocumentWatcher
 from dotenv import load_dotenv
 
 # Load environment variables from your specific location

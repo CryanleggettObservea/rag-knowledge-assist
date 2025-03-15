@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from ..utils.document_watcher import DocumentWatcher
 from typing import List, Optional
 import os
 import shutil
@@ -39,8 +40,22 @@ processor = None
 async def startup_event():
     global retriever, processor
     logger.info("Initializing RAG components...")
-    retriever = RAGRetriever()
+    
+    # Initialize the document processor
     processor = DocumentProcessor()
+    
+    # Process any documents in the documents directory
+    logger.info("Checking for documents to process...")
+    num_chunks = processor.process_documents()
+    logger.info(f"Processed {num_chunks} document chunks on startup")
+    
+    # Initialize the retriever AFTER processing documents
+    retriever = RAGRetriever()
+    
+    # Start document watcher (check for updates every 30 seconds)
+    watcher = DocumentWatcher(documents_dir, check_interval=30)
+    watcher.start()
+    
     logger.info("RAG components initialized")
 
 class Query(BaseModel):
@@ -85,6 +100,7 @@ async def upload_document(file: UploadFile = File(...)):
         
         # Process documents
         num_chunks = processor.process_documents()
+        logger.info(f"Processed {num_chunks} document chunks after upload")
         
         # Reinitialize the retriever to use the updated vector store
         global retriever
