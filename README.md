@@ -11,6 +11,9 @@ A domain-specific knowledge assistant using Retrieval Augmented Generation (RAG)
 - Automatic document monitoring and processing
 - Simple API for integration
 
+## UI Example
+![Application Screenshot](./images/AppScreenshot.png)
+
 ## Setup
 
 ### Prerequisites
